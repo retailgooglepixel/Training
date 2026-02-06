@@ -213,12 +213,12 @@
     </div>
 
     <script>
-        // --- UPDATED URL ---
-        const API_URL = "https://script.google.com/macros/s/AKfycbz2by0QpRMk-bBdpk_2K7yDikmP5eaRiRvLlQYsg1htqWfP6vzb6KPE5_Bxp1PUvmUa/exec";
-        // -------------------
+        // --- DEINE NEUE URL ---
+        const API_URL = "https://script.google.com/macros/s/AKfycby9EfW7kj58TR3W7IlPt2-0PSFoUbacbQOSh3prCyEpizCRUj3aNYcdafaQlBAwylHK/exec";
+        // ----------------------
         
         const ROLE = 'shopleiter'; 
-        // Link zum Meeting (wird in Kalender eingetragen)
+        // Link zum Meeting (wird in Kalender eingetragen UND per Mail versendet)
         const MEETING_LINK = "https://meet.google.com/tjm-ghiz-tgb"; 
 
         let allSlots = []; 
@@ -326,10 +326,11 @@
                 email: userData.email,
                 role: ROLE,
                 slotStart: selectedSlotData.startIso,
-                slotEnd: selectedSlotData.endIso
+                slotEnd: selectedSlotData.endIso,
+                meetingLink: MEETING_LINK 
             };
 
-            // Sende Daten ans Sheet (ohne auf Antwort zu warten für besseren UX Flow)
+            // Sende Daten ans Sheet
             try {
                 fetch(API_URL, {
                     method: 'POST',
@@ -341,9 +342,6 @@
 
             document.getElementById('step-calendar').classList.add('hidden');
             document.getElementById('success-container').classList.remove('hidden');
-            
-            // Automatisch ICS Download starten
-            setTimeout(downloadICS, 1000);
         }
 
         // --- KALENDER FUNKTIONEN ---
@@ -362,7 +360,6 @@
             };
         }
 
-        // 1. ICS Datei für Outlook, Apple, Android
         function downloadICS() {
             if (!selectedSlotData) return;
             const det = getCalDetails();
@@ -392,7 +389,6 @@ END:VCALENDAR`;
             document.body.removeChild(link);
         }
 
-        // 2. Google Kalender Web Link
         function openGoogleCal() {
             if (!selectedSlotData) return;
             const det = getCalDetails();
