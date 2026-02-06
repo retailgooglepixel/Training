@@ -13,39 +13,25 @@
 
         body {
             font-family: 'Roboto', sans-serif;
-            margin: 0;
-            padding: 0;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            margin: 0; padding: 0; min-height: 100vh;
+            display: flex; justify-content: center; align-items: center;
             background-image: var(--bg-image);
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
+            background-size: cover; background-position: center; background-attachment: fixed;
         }
 
         body::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(255, 255, 255, 0.4); 
-            backdrop-filter: blur(5px);
-            z-index: -1;
+            content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(255, 255, 255, 0.4); backdrop-filter: blur(5px); z-index: -1;
         }
 
         .card {
             background: rgba(255, 255, 255, 0.95);
-            padding: 40px;
-            border-radius: 16px;
+            padding: 40px; border-radius: 16px;
             box-shadow: 0 15px 35px rgba(0,0,0,0.2);
-            width: 90%;
-            max-width: 500px;
-            text-align: center;
-            position: relative;
+            width: 90%; max-width: 500px;
+            text-align: center; position: relative;
             animation: slideUp 0.5s ease-out;
-            max-height: 90vh;
-            overflow-y: auto;
+            max-height: 90vh; overflow-y: auto;
             scrollbar-width: thin;
         }
         
@@ -53,24 +39,15 @@
         .card::-webkit-scrollbar-track { background: transparent; }
         .card::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px; }
 
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
         h1 { color: #202124; font-size: 1.8rem; margin: 0 0 5px 0; font-weight: 500; }
         p.subtitle { color: #5f6368; margin-bottom: 30px; font-size: 1rem; line-height: 1.4; }
 
-        /* Abgerundete Box */
         .description-box {
-            text-align: left;
-            background-color: #f0f5ff;
-            color: #1f1f1f;
-            padding: 20px;
-            border-radius: 16px; 
-            margin-bottom: 25px;
-            font-size: 0.95rem;
-            line-height: 1.6;
+            text-align: left; background-color: #f0f5ff; color: #1f1f1f;
+            padding: 20px; border-radius: 16px; margin-bottom: 25px;
+            font-size: 0.95rem; line-height: 1.6;
             border: 1px solid rgba(66, 133, 244, 0.2);
             box-shadow: 0 2px 8px rgba(66, 133, 244, 0.05);
         }
@@ -86,18 +63,13 @@
             position: absolute; top: 16px; left: 10px; font-size: 16px; color: #5f6368;
             pointer-events: none; transition: 0.2s ease all; background: transparent; padding: 0 5px;
         }
-        .input-group input:focus, .input-group input:valid {
-            border-color: var(--primary); background: white; padding: 14px 12px;
-        }
+        .input-group input:focus, .input-group input:valid { border-color: var(--primary); background: white; padding: 14px 12px; }
         .input-group input:focus ~ label, .input-group input:valid ~ label {
             top: -10px; font-size: 12px; color: var(--primary); font-weight: 600; background: white; border-radius: 4px;
         }
 
         /* Wochen Navi */
-        .week-nav {
-            display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 15px; padding: 0 5px;
-        }
+        .week-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding: 0 5px; }
         .nav-btn {
             background: none; border: 1px solid #dadce0; color: #5f6368; padding: 5px;
             border-radius: 50%; cursor: pointer; font-size: 1.2rem; width: 40px; height: 40px;
@@ -111,9 +83,6 @@
             display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
             margin-bottom: 25px; max-height: 300px; overflow-y: auto; padding: 5px;
         }
-        .calendar-grid::-webkit-scrollbar { width: 4px; }
-        .calendar-grid::-webkit-scrollbar-thumb { background: #ccc; border-radius: 2px; }
-
         .slot-tile {
             background: rgba(255,255,255,0.8); border: 1px solid #dadce0; border-radius: 12px;
             padding: 10px; cursor: pointer; transition: all 0.2s ease;
@@ -139,49 +108,43 @@
         button.action-btn:hover { background-color: #3367d6; }
         button.action-btn:disabled { background-color: #dadce0; color: #888; cursor: not-allowed; box-shadow: none; }
 
+        /* Success & Calendar Buttons */
         .hidden { display: none !important; }
-        
         .success-box { animation: fadeIn 0.6s; padding: 20px 0; }
-        .success-icon { font-size: 70px; color: #34A853; margin-bottom: 20px; display: block; }
+        .success-icon { font-size: 70px; color: #34A853; margin-bottom: 10px; display: block; }
         
-        /* Neuer Kalender Button Style */
-        .btn-calendar {
-            background-color: #34A853; /* Google Grün */
-            color: white;
-            border: none;
-            padding: 15px;
-            width: 100%;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            margin-top: 15px;
-            margin-bottom: 10px;
-            box-shadow: 0 4px 6px rgba(52, 168, 83, 0.2);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
+        .cal-btn-container { margin-top: 25px; display: flex; flex-direction: column; gap: 10px; }
+        
+        .btn-ics {
+            background-color: #1a73e8; color: white; border: none; padding: 15px; width: 100%;
+            border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            box-shadow: 0 4px 6px rgba(26, 115, 232, 0.2);
         }
-        .btn-calendar:hover { background-color: #2d9248; }
+        .btn-ics:hover { background-color: #1557b0; }
+
+        .btn-google {
+            background-color: white; color: #3c4043; border: 1px solid #dadce0; padding: 15px; width: 100%;
+            border-radius: 8px; font-size: 16px; font-weight: 500; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .btn-google:hover { background-color: #f8f9fa; border-color: #3c4043; }
 
         .btn-secondary {
-            background-color: transparent; color: var(--primary); border: 2px solid var(--primary);
-            box-shadow: none; padding: 10px 20px; border-radius: 8px; font-weight: 600;
-            cursor: pointer; margin-top: 10px;
+            background-color: transparent; color: #5f6368; border: none;
+            padding: 10px; font-size: 0.9rem; cursor: pointer; margin-top: 20px; text-decoration: underline;
         }
+        
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
 
     <div class="card">
-        <!-- Lade-Screen -->
         <div id="loader-overlay" style="padding: 40px 0;">
             <div style="color: var(--primary);">Lade Termine...</div>
         </div>
 
-        <!-- SCHRITT 1: Login -->
         <div id="step-login" class="hidden">
             <h1>Willkommen</h1>
             <p class="subtitle">Bitte melde dich an, um fortzufahren.</p>
@@ -199,7 +162,6 @@
             <button class="action-btn" onclick="goToCalendar()">Weiter zur Terminauswahl</button>
         </div>
 
-        <!-- SCHRITT 2: Kalender -->
         <div id="step-calendar" class="hidden">
             <h1>Training buchen</h1>
             <p class="subtitle">Google Pixel - Shopleiter</p>
@@ -216,9 +178,7 @@
                 <button class="nav-btn" onclick="changeWeek(1)">&#8250;</button>
             </div>
 
-            <div id="slots-grid" class="calendar-grid">
-                <!-- Kacheln -->
-            </div>
+            <div id="slots-grid" class="calendar-grid"></div>
             <div id="no-slots-msg" class="hidden" style="color:#888; margin-bottom:15px; font-size: 0.9rem;">Keine Termine in dieser Woche.</div>
 
             <button id="btn-submit" class="action-btn" onclick="submitBooking()" disabled>Termin verbindlich buchen</button>
@@ -228,28 +188,38 @@
             </div>
         </div>
 
-        <!-- Erfolgsmeldung -->
         <div id="success-container" class="hidden success-box">
             <span class="success-icon">✓</span>
-            <h2>Vielen Dank!</h2>
-            <p style="color: #5f6368; line-height: 1.6;">
-                Deine Buchung wurde bestätigt.<br>
-                Bitte speichere den Termin jetzt in deinen Kalender:
+            <h2>Gebucht!</h2>
+            <p style="color: #333; line-height: 1.6; margin-bottom:5px;">
+                Deine Daten wurden gespeichert.
+            </p>
+            <p style="color: #5f6368; font-size: 0.9rem; margin-bottom: 20px;">
+                Damit du den Termin nicht vergisst, speichere ihn jetzt direkt in deinen Kalender:
             </p>
             
-            <!-- Neuer Button für Kalender -->
-            <button class="btn-calendar" onclick="downloadICS()">
-                📅 Termin in Kalender speichern
-            </button>
+            <div class="cal-btn-container">
+                <button class="btn-ics" onclick="downloadICS()">
+                    <span>📅</span> Kalendereintrag öffnen (Alle)
+                </button>
+                
+                <button class="btn-google" onclick="openGoogleCal()">
+                    <span>G</span> Google Kalender (Browser)
+                </button>
+            </div>
 
-            <button class="btn-secondary" onclick="location.reload()">Weitere Buchung</button>
+            <button class="btn-secondary" onclick="location.reload()">Neuen Termin buchen</button>
         </div>
     </div>
 
     <script>
-        // Deine URL
-        const API_URL = "https://script.google.com/macros/s/AKfycbywtZ7OU7PYnezYfTFZOV-cIbGjJkeO6avvNFCIYno1pTaf7SQD2aUiiCsjD81wV0d2/exec";
+        // --- UPDATED URL ---
+        const API_URL = "https://script.google.com/macros/s/AKfycbz2by0QpRMk-bBdpk_2K7yDikmP5eaRiRvLlQYsg1htqWfP6vzb6KPE5_Bxp1PUvmUa/exec";
+        // -------------------
+        
         const ROLE = 'shopleiter'; 
+        // Link zum Meeting (wird in Kalender eingetragen)
+        const MEETING_LINK = "https://meet.google.com/tjm-ghiz-tgb"; 
 
         let allSlots = []; 
         let currentWeekStart = new Date(); 
@@ -262,14 +232,7 @@
             try {
                 const response = await fetch(`${API_URL}?role=${ROLE}`);
                 allSlots = await response.json();
-                
-                const loader = document.getElementById('loader-overlay');
-                loader.classList.add('hidden');
-
-                if(!allSlots || allSlots.length === 0) {
-                    alert("Keine Termine verfügbar.");
-                    return;
-                }
+                document.getElementById('loader-overlay').classList.add('hidden');
 
                 if(allSlots.length > 0) {
                     const firstSlotDate = new Date(allSlots[0].startIso);
@@ -279,31 +242,18 @@
                     currentWeekStart.setDate(diff);
                     currentWeekStart.setHours(0,0,0,0);
                 }
-
                 document.getElementById('step-login').classList.remove('hidden');
             } catch (e) {
-                document.getElementById('loader-overlay').innerText = "Fehler beim Laden. Bitte Seite neu laden.";
                 console.error(e);
+                alert("Fehler beim Laden.");
             }
         }
 
-        // --- NAV ---
         function goToCalendar() {
-            const nameInput = document.getElementById('name');
-            const emailInput = document.getElementById('email');
-
-            if (!nameInput.value || !emailInput.value) {
-                alert("Bitte fülle deinen Namen und deine E-Mail aus.");
-                return;
-            }
-            if (!emailInput.value.includes('@')) {
-                alert("Bitte eine gültige E-Mail eingeben.");
-                return;
-            }
-
-            userData.name = nameInput.value;
-            userData.email = emailInput.value;
-
+            const n = document.getElementById('name').value;
+            const e = document.getElementById('email').value;
+            if (!n || !e || !e.includes('@')) { alert("Bitte korrekte Daten eingeben."); return; }
+            userData = { name: n, email: e };
             document.getElementById('step-login').classList.add('hidden');
             document.getElementById('step-calendar').classList.remove('hidden');
             renderWeek();
@@ -314,7 +264,6 @@
             document.getElementById('step-login').classList.remove('hidden');
         }
 
-        // --- CALENDAR GRID ---
         function changeWeek(offset) {
             currentWeekStart.setDate(currentWeekStart.getDate() + (offset * 7));
             renderWeek();
@@ -324,10 +273,8 @@
             const grid = document.getElementById('slots-grid');
             const label = document.getElementById('week-label');
             const noSlotsMsg = document.getElementById('no-slots-msg');
-            const submitBtn = document.getElementById('btn-submit');
-            
             grid.innerHTML = '';
-            submitBtn.disabled = true;
+            document.getElementById('btn-submit').disabled = true;
             selectedSlotData = null;
 
             let weekEnd = new Date(currentWeekStart);
@@ -342,24 +289,17 @@
                 return sDate >= currentWeekStart && sDate <= weekEnd;
             });
 
-            if (slotsInWeek.length === 0) {
-                noSlotsMsg.classList.remove('hidden');
-            } else {
+            if (slotsInWeek.length === 0) noSlotsMsg.classList.remove('hidden');
+            else {
                 noSlotsMsg.classList.add('hidden');
-                
                 slotsInWeek.forEach(slot => {
-                    const slotDateObj = new Date(slot.startIso);
-                    const dayName = slotDateObj.toLocaleDateString('de-DE', { weekday: 'short' }); 
-                    const dayNum = slotDateObj.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit' });
-
+                    const d = new Date(slot.startIso);
                     const tile = document.createElement('div');
                     tile.className = 'slot-tile';
-                    const timeOnly = slot.displayTime.split(' - ')[0];
-
                     tile.innerHTML = `
-                        <span class="slot-day">${dayName}</span>
-                        <span class="slot-date">${dayNum}</span>
-                        <span class="slot-time">${timeOnly} Uhr</span>
+                        <span class="slot-day">${d.toLocaleDateString('de-DE', {weekday:'short'})}</span>
+                        <span class="slot-date">${d.toLocaleDateString('de-DE', {day:'2-digit', month:'2-digit'})}</span>
+                        <span class="slot-time">${slot.displayTime.split(' - ')[0]} Uhr</span>
                     `;
                     tile.onclick = () => selectSlot(tile, slot);
                     grid.appendChild(tile);
@@ -367,41 +307,29 @@
             }
         }
 
-        function selectSlot(element, data) {
-            const tiles = document.querySelectorAll('.slot-tile');
-            tiles.forEach(t => t.classList.remove('selected'));
-            element.classList.add('selected');
-            
-            selectedSlotData = {
-                start: data.startIso,
-                end: data.endIso,
-                displayDate: data.displayDate,
-                displayTime: data.displayTime
-            };
-
+        function selectSlot(el, data) {
+            document.querySelectorAll('.slot-tile').forEach(t => t.classList.remove('selected'));
+            el.classList.add('selected');
+            selectedSlotData = data;
             const btn = document.getElementById('btn-submit');
             btn.disabled = false;
             btn.innerText = "Termin verbindlich buchen";
         }
 
-        // --- SUBMIT ---
         async function submitBooking() {
             const btn = document.getElementById('btn-submit');
-
-            if (!selectedSlotData) return;
-
-            btn.innerText = "Wird gesendet...";
+            btn.innerText = "Speichere...";
             btn.disabled = true;
 
             const payload = {
                 name: userData.name,
                 email: userData.email,
                 role: ROLE,
-                slotStart: selectedSlotData.start,
-                slotEnd: selectedSlotData.end
+                slotStart: selectedSlotData.startIso,
+                slotEnd: selectedSlotData.endIso
             };
 
-            // Backend informieren (Versuch)
+            // Sende Daten ans Sheet (ohne auf Antwort zu warten für besseren UX Flow)
             try {
                 fetch(API_URL, {
                     method: 'POST',
@@ -409,62 +337,70 @@
                     headers: { 'Content-Type': 'text/plain' },
                     body: JSON.stringify(payload)
                 });
-            } catch (e) {
-                console.log("Backend offline, mache trotzdem weiter");
-            }
+            } catch (e) { console.log("Fehler beim Senden, weiter im Text."); }
 
-            // Erfolgsanzeige + Auto Download Kalender
-            showSuccess();
-            // Automatisch Kalenderdatei herunterladen
-            setTimeout(downloadICS, 500); 
-        }
-
-        function showSuccess() {
             document.getElementById('step-calendar').classList.add('hidden');
             document.getElementById('success-container').classList.remove('hidden');
+            
+            // Automatisch ICS Download starten
+            setTimeout(downloadICS, 1000);
         }
 
-        // --- KALENDER DATEI ERSTELLEN (.ICS) ---
+        // --- KALENDER FUNKTIONEN ---
+
+        function formatICSDate(isoStr) {
+            return isoStr.replace(/[-:]/g, '').split('.')[0] + 'Z';
+        }
+
+        function getCalDetails() {
+            return {
+                title: "UWYS Training: Google Pixel AI",
+                desc: `Hallo ${userData.name},\n\nHier ist dein Termin für das Training.\nLink: ${MEETING_LINK}`,
+                loc: "Online / Google Meet",
+                start: selectedSlotData.startIso,
+                end: selectedSlotData.endIso
+            };
+        }
+
+        // 1. ICS Datei für Outlook, Apple, Android
         function downloadICS() {
             if (!selectedSlotData) return;
+            const det = getCalDetails();
+            const startStr = formatICSDate(new Date(det.start).toISOString());
+            const endStr = formatICSDate(new Date(det.end).toISOString());
 
-            // Formatiere Datum für .ics (YYYYMMDDTHHmmSSZ)
-            const formatICSDate = (isoStr) => {
-                return isoStr.replace(/[-:]/g, '').split('.')[0] + 'Z';
-            };
-
-            // Zeiten müssen in UTC sein, aber wir haben lokale ISO strings im Array
-            // Wir nehmen hier einfach die ISO Strings und strippen sie
-            // Achtung: Einfache Umwandlung, passt für lokale Kalender meistens
-            const startStr = formatICSDate(new Date(selectedSlotData.start).toISOString());
-            const endStr = formatICSDate(new Date(selectedSlotData.end).toISOString());
-
-            const description = `Hallo ${userData.name},\n\nHier ist dein Termin für das UWYS Training.\nWir freuen uns auf dich!\n\nLink: Google Meet (siehe Einladung)`;
-            const summary = "UWYS Training: Google Pixel AI";
-
-            const icsContent = 
-`BEGIN:VCALENDAR
+            const icsContent = `BEGIN:VCALENDAR
 VERSION:2.0
 PRODID:-//UWYS//Training//DE
 CALSCALE:GREGORIAN
 BEGIN:VEVENT
-SUMMARY:${summary}
+SUMMARY:${det.title}
 DTSTART:${startStr}
 DTEND:${endStr}
-DESCRIPTION:${description.replace(/\n/g, '\\n')}
-LOCATION:Online / Google Meet
+DESCRIPTION:${det.desc.replace(/\n/g, '\\n')}
+LOCATION:${det.loc}
 STATUS:CONFIRMED
 END:VEVENT
 END:VCALENDAR`;
 
-            // Datei Download auslösen
             const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
             const link = document.createElement('a');
             link.href = window.URL.createObjectURL(blob);
-            link.setAttribute('download', 'UWYS-Training.ics');
+            link.setAttribute('download', 'Training-Termin.ics');
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
+        }
+
+        // 2. Google Kalender Web Link
+        function openGoogleCal() {
+            if (!selectedSlotData) return;
+            const det = getCalDetails();
+            const startStr = formatICSDate(new Date(det.start).toISOString());
+            const endStr = formatICSDate(new Date(det.end).toISOString());
+            
+            const url = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(det.title)}&dates=${startStr}/${endStr}&details=${encodeURIComponent(det.desc)}&location=${encodeURIComponent(det.loc)}`;
+            window.open(url, '_blank');
         }
     </script>
 </body>
