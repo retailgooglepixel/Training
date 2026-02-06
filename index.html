@@ -234,19 +234,21 @@
                 <p class="final-sub">Wir freuen uns auf dich.</p>
                 <br>
                 <p style="font-size: 3rem;">👋</p>
-
-                <button class="action-btn" onclick="location.reload()" style="margin-top: 30px;">
-                    Zurück zur Hauptseite
-                </button>
+                
+                <div style="margin-top: 40px;">
+                    <button class="action-btn" onclick="location.reload()">
+                        Zurück zur Hauptseite
+                    </button>
+                </div>
             </div>
 
         </div>
     </div>
 
     <script>
-        // --- URL ---
-        const API_URL = "https://script.google.com/macros/s/AKfycby9EfW7kj58TR3W7IlPt2-0PSFoUbacbQOSh3prCyEpizCRUj3aNYcdafaQlBAwylHK/exec";
-        // -----------
+        // --- DEINE NEUE URL ---
+        const API_URL = "https://script.google.com/macros/s/AKfycbzTmWe7hWq7E0XGwJv8i0MQn92Vs6rQOmlAFqLVd1ILf2JZRwjvmB-XTG8Rxcax4TrD/exec";
+        // ----------------------
         
         const ROLE = 'shopleiter'; 
         const MEETING_LINK = "https://meet.google.com/tjm-ghiz-tgb"; 
@@ -373,7 +375,7 @@
             document.getElementById('success-container').classList.remove('hidden');
         }
 
-        // --- NEW: CONFETTI & FINAL MESSAGE ---
+        // --- KONFETTI & FINAL MESSAGE ---
 
         function triggerConfettiAndFinalMsg() {
             // 1. Verstecke die Buttons und den bisherigen Inhalt
