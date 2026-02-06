@@ -3,12 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UWYS Buchung - Shopleiter</title>
+    <title>UWYS Buchung - Google Pixel AI</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary: #4285F4;
-            /* Hintergrundbild aus deinem Screenshot */
             --bg-image: url('https://i.postimg.cc/hjXwS49w/Screenshot_04_02_2026_um_17_28_35_PM.png');
         }
 
@@ -26,7 +25,6 @@
             background-attachment: fixed;
         }
 
-        /* Dunkler Blur-Overlay, damit man den Text gut lesen kann */
         body::before {
             content: '';
             position: absolute;
@@ -37,16 +35,23 @@
         }
 
         .card {
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(255, 255, 255, 0.92);
             padding: 40px;
             border-radius: 16px;
             box-shadow: 0 15px 35px rgba(0,0,0,0.2);
             width: 90%;
-            max-width: 420px;
+            max-width: 450px; /* Etwas breiter für den Text */
             text-align: center;
             position: relative;
             animation: slideUp 0.5s ease-out;
+            max-height: 90vh;
+            overflow-y: auto;
         }
+
+        /* Scrollbar für die Karte selbst, falls Inhalt zu lang */
+        .card::-webkit-scrollbar { width: 6px; }
+        .card::-webkit-scrollbar-track { background: transparent; }
+        .card::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px; }
 
         @keyframes slideUp {
             from { opacity: 0; transform: translateY(20px); }
@@ -56,32 +61,88 @@
         h1 {
             color: #202124;
             font-size: 1.8rem;
-            margin: 0 0 10px 0;
+            margin: 0 0 5px 0;
             font-weight: 500;
         }
         
         p.subtitle {
             color: #5f6368;
-            margin-bottom: 35px;
-            font-size: 0.95rem;
+            margin-bottom: 20px;
+            font-size: 1rem;
+            line-height: 1.4;
+        }
+
+        /* --- BESCHREIBUNGSBOX --- */
+        .description-box {
+            text-align: left;
+            background-color: rgba(66, 133, 244, 0.08); /* Sehr helles Blau */
+            border-left: 4px solid var(--primary);
+            padding: 15px;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 25px;
+            font-size: 0.9rem;
+            color: #333;
             line-height: 1.5;
         }
 
-        /* Animierte Input Felder */
+        /* --- KACHEL DESIGN --- */
+        .slot-container {
+            text-align: left;
+            margin-bottom: 25px;
+            max-height: 180px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+        
+        .slot-container::-webkit-scrollbar { width: 6px; }
+        .slot-container::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 3px; }
+        .slot-container::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px; }
+
+        .slot-tile {
+            background: rgba(255,255,255,0.8);
+            border: 1px solid #dadce0;
+            border-radius: 8px;
+            padding: 12px 15px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.95rem;
+        }
+
+        .slot-tile:hover {
+            border-color: #a0c0f8;
+            background: white;
+            transform: translateX(2px);
+        }
+
+        .slot-tile.selected {
+            border-color: var(--primary);
+            background-color: #e8f0fe;
+            color: var(--primary);
+            font-weight: 500;
+            box-shadow: 0 2px 5px rgba(66, 133, 244, 0.15);
+        }
+
+        .slot-label { font-size: 0.85rem; color: #5f6368; margin-bottom: 8px; display: block; text-align: left; font-weight: 500; }
+
+        /* --- INPUT DESIGN --- */
         .input-group {
             position: relative;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             text-align: left;
         }
 
-        .input-group input, .input-group select {
+        .input-group input {
             width: 100%;
             padding: 12px 12px;
             border: 1px solid #dadce0;
             border-radius: 8px;
             font-size: 16px;
             outline: none;
-            background: transparent;
+            background: rgba(255,255,255,0.6);
             transition: all 0.3s;
             box-sizing: border-box;
             color: #333;
@@ -95,27 +156,26 @@
             color: #5f6368;
             pointer-events: none;
             transition: 0.2s ease all;
-            background: rgba(255,255,255,0.9);
+            background: transparent; 
             padding: 0 5px;
         }
 
-        /* Label bewegt sich nach oben bei Fokus oder Inhalt */
-        .input-group input:focus, .input-group input:valid,
-        .input-group select:focus, .input-group select.has-value {
+        .input-group input:focus, .input-group input:valid {
             border-color: var(--primary);
-            border-width: 2px;
-            padding: 11px 11px; /* Ausgleich für dickeren Rahmen */
+            background: white;
+            padding: 11px 11px;
         }
 
-        .input-group input:focus ~ label, .input-group input:valid ~ label,
-        .input-group select:focus ~ label, .input-group select.has-value ~ label {
+        .input-group input:focus ~ label, .input-group input:valid ~ label {
             top: -10px;
-            font-size: 13px;
+            font-size: 12px;
             color: var(--primary);
             font-weight: 600;
+            background: white;
+            border-radius: 4px;
         }
 
-        /* Button Styling */
+        /* --- BUTTONS --- */
         button {
             background-color: var(--primary);
             color: white;
@@ -134,6 +194,18 @@
         button:hover { background-color: #3367d6; box-shadow: 0 6px 8px rgba(66, 133, 244, 0.3); }
         button:active { transform: scale(0.98); }
         button:disabled { background-color: #dadce0; color: #888; cursor: not-allowed; box-shadow: none; }
+
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+            box-shadow: none;
+            margin-top: 20px;
+        }
+        .btn-secondary:hover {
+            background-color: #e8f0fe;
+            box-shadow: none;
+        }
 
         .hidden { display: none; }
 
@@ -158,16 +230,30 @@
 <body>
 
     <div class="card">
-        <!-- Lade-Screen bevor Daten da sind -->
+        <!-- Lade-Screen -->
         <div id="loader-overlay" style="padding: 40px 0;">
-            <div style="color: var(--primary);">Lade verfügbare Termine...</div>
+            <div style="color: var(--primary);">Lade Termine...</div>
         </div>
 
         <!-- Formular -->
         <div id="form-container" class="hidden">
             <h1>Training buchen</h1>
-            <p class="subtitle">Partner Spring Launch 26<br><strong>Shopleiter</strong></p>
+            <p class="subtitle">Google Pixel - next Gen AI<br><strong>Shopleiter</strong></p>
 
+            <!-- NEU: Beschreibungstext -->
+            <div class="description-box">
+                Wir zeigen dir im Training, warum dieses Gerät der perfekte Begleiter ist: Von der leistungsstarken Kamera über smarte KI-Features bis hin zum Akku, der dich nie ausbremst. Erfahre alles, was du wissen musst, um voll durchzustarten. 🚀
+                <br><br>
+                <strong>Verpasse auf keinen Fall diese Gelegenheit und melde dich jetzt an!</strong>
+            </div>
+
+            <!-- Kachel Auswahl -->
+            <span class="slot-label">Wähle deinen Termin:</span>
+            <div id="slots-area" class="slot-container">
+                <!-- Kacheln werden hier per JS eingefügt -->
+            </div>
+
+            <!-- Eingabefelder -->
             <div class="input-group">
                 <input type="text" id="name" required>
                 <label>Vor- und Nachname</label>
@@ -176,13 +262,6 @@
             <div class="input-group">
                 <input type="email" id="email" required>
                 <label>E-Mail Adresse</label>
-            </div>
-
-            <div class="input-group">
-                <select id="slot" onchange="this.classList.add('has-value')" required>
-                    <option value="" disabled selected></option>
-                </select>
-                <label>Termin wählen</label>
             </div>
 
             <button id="btn-submit" onclick="submitBooking()">Jetzt buchen</button>
@@ -196,6 +275,8 @@
                 Deine Buchung wurde erfolgreich bestätigt.<br>
                 Wir haben dir eine E-Mail gesendet.
             </p>
+            <!-- Button zum Neuladen -->
+            <button class="btn-secondary" onclick="location.reload()">Weitere Trainings buchen</button>
         </div>
     </div>
 
@@ -205,34 +286,35 @@
         const ROLE = 'shopleiter'; 
         // ---------------------
 
+        let selectedSlotData = null;
+
         window.onload = loadSlots;
 
         async function loadSlots() {
             try {
-                // Daten vom Google Script holen
                 const response = await fetch(`${API_URL}?role=${ROLE}`);
                 const slots = await response.json();
                 
-                const select = document.getElementById('slot');
+                const slotsArea = document.getElementById('slots-area');
                 const loader = document.getElementById('loader-overlay');
                 const form = document.getElementById('form-container');
                 
-                // Falls keine Slots da sind
                 if(!slots || slots.length === 0) {
                     loader.innerHTML = "Aktuell keine Termine verfügbar.";
                     return;
                 }
 
-                // Dropdown füllen
                 slots.forEach(slot => {
-                    const opt = document.createElement('option');
-                    // Wir speichern Start & Ende als String im Value
-                    opt.value = JSON.stringify({ start: slot.startIso, end: slot.endIso });
-                    opt.innerText = `${slot.weekday}, ${slot.displayDate} – ${slot.displayTime}`;
-                    select.appendChild(opt);
+                    const tile = document.createElement('div');
+                    tile.className = 'slot-tile';
+                    tile.innerHTML = `
+                        <span>${slot.weekday}, ${slot.displayDate}</span>
+                        <span style="font-weight:bold;">${slot.displayTime}</span>
+                    `;
+                    tile.onclick = () => selectSlot(tile, slot);
+                    slotsArea.appendChild(tile);
                 });
 
-                // Loader ausblenden, Formular anzeigen
                 loader.classList.add('hidden');
                 form.classList.remove('hidden');
 
@@ -242,15 +324,27 @@
             }
         }
 
+        function selectSlot(element, data) {
+            const tiles = document.querySelectorAll('.slot-tile');
+            tiles.forEach(t => t.classList.remove('selected'));
+            element.classList.add('selected');
+            selectedSlotData = {
+                start: data.startIso,
+                end: data.endIso
+            };
+        }
+
         async function submitBooking() {
             const nameField = document.getElementById('name');
             const emailField = document.getElementById('email');
-            const slotField = document.getElementById('slot');
             const btn = document.getElementById('btn-submit');
 
-            // 1. Validierung
-            if (!nameField.value || !emailField.value || !slotField.value) {
-                alert("Bitte alle Felder ausfüllen.");
+            if (!selectedSlotData) {
+                alert("Bitte wähle zuerst einen Termin aus.");
+                return;
+            }
+            if (!nameField.value || !emailField.value) {
+                alert("Bitte Name und E-Mail ausfüllen.");
                 return;
             }
             if (!emailField.value.includes('@')) {
@@ -258,33 +352,25 @@
                 return;
             }
 
-            // 2. UI auf 'Laden' setzen
             btn.innerText = "Wird gesendet...";
             btn.disabled = true;
-
-            const slotData = JSON.parse(slotField.value);
 
             const payload = {
                 name: nameField.value,
                 email: emailField.value,
                 role: ROLE,
-                slotStart: slotData.start,
-                slotEnd: slotData.end
+                slotStart: selectedSlotData.start,
+                slotEnd: selectedSlotData.end
             };
 
-            // 3. Daten an Google Script senden
             try {
-                // mode: 'no-cors' ist wichtig, damit Browser den Request an Google erlaubt
                 await fetch(API_URL, {
                     method: 'POST',
                     mode: 'no-cors',
                     headers: { 'Content-Type': 'text/plain' },
                     body: JSON.stringify(payload)
                 });
-
-                // Da 'no-cors' keine Antwort lesen lässt, gehen wir bei keinem Netzwerkfehler von Erfolg aus
                 showSuccess();
-
             } catch (e) {
                 alert("Verbindungsfehler. Bitte versuche es erneut.");
                 btn.disabled = false;
