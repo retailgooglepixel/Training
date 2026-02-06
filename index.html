@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>UWYS Buchung - Google Pixel AI</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
     <style>
         :root {
             --primary: #4285F4;
@@ -135,6 +137,21 @@
             padding: 10px; font-size: 0.9rem; cursor: pointer; margin-top: 20px; text-decoration: underline;
         }
         
+        /* Neuer Final Screen */
+        .final-msg-box {
+            animation: fadeIn 0.8s;
+            padding: 30px 10px;
+        }
+        .final-headline {
+            color: var(--primary);
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+        .final-sub {
+            font-size: 1.1rem;
+            color: #555;
+        }
+
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
@@ -189,36 +206,45 @@
         </div>
 
         <div id="success-container" class="hidden success-box">
-            <span class="success-icon">✓</span>
-            <h2>Gebucht!</h2>
-            <p style="color: #333; line-height: 1.6; margin-bottom:5px;">
-                Deine Daten wurden gespeichert.
-            </p>
-            <p style="color: #5f6368; font-size: 0.9rem; margin-bottom: 20px;">
-                Damit du den Termin nicht vergisst, speichere ihn jetzt direkt in deinen Kalender:
-            </p>
-            
-            <div class="cal-btn-container">
-                <button class="btn-ics" onclick="downloadICS()">
-                    <span>📅</span> Kalendereintrag öffnen (Alle)
-                </button>
+            <div id="booking-confirmed-content">
+                <span class="success-icon">✓</span>
+                <h2>Gebucht!</h2>
+                <p style="color: #333; line-height: 1.6; margin-bottom:5px;">
+                    Deine Daten wurden gespeichert.
+                </p>
+                <p style="color: #5f6368; font-size: 0.9rem; margin-bottom: 20px;">
+                    Damit du den Termin nicht vergisst, speichere ihn jetzt direkt in deinen Kalender:
+                </p>
                 
-                <button class="btn-google" onclick="openGoogleCal()">
-                    <span>G</span> Google Kalender (Browser)
-                </button>
+                <div class="cal-btn-container">
+                    <button class="btn-ics" onclick="downloadICS()">
+                        <span>📅</span> Kalendereintrag öffnen (Alle)
+                    </button>
+                    
+                    <button class="btn-google" onclick="openGoogleCal()">
+                        <span>G</span> Google Kalender (Browser)
+                    </button>
+                </div>
+
+                <button class="btn-secondary" onclick="location.reload()">Neuen Termin buchen</button>
             </div>
 
-            <button class="btn-secondary" onclick="location.reload()">Neuen Termin buchen</button>
+            <div id="final-msg" class="hidden final-msg-box">
+                <h1 class="final-headline">Vielen Dank! 🎉</h1>
+                <p class="final-sub">Wir freuen uns auf dich.</p>
+                <br>
+                <p style="font-size: 3rem;">👋</p>
+            </div>
+
         </div>
     </div>
 
     <script>
-        // --- DEINE NEUE URL ---
+        // --- URL ---
         const API_URL = "https://script.google.com/macros/s/AKfycby9EfW7kj58TR3W7IlPt2-0PSFoUbacbQOSh3prCyEpizCRUj3aNYcdafaQlBAwylHK/exec";
-        // ----------------------
+        // -----------
         
         const ROLE = 'shopleiter'; 
-        // Link zum Meeting (wird in Kalender eingetragen UND per Mail versendet)
         const MEETING_LINK = "https://meet.google.com/tjm-ghiz-tgb"; 
 
         let allSlots = []; 
@@ -330,7 +356,6 @@
                 meetingLink: MEETING_LINK 
             };
 
-            // Sende Daten ans Sheet
             try {
                 fetch(API_URL, {
                     method: 'POST',
@@ -342,6 +367,41 @@
 
             document.getElementById('step-calendar').classList.add('hidden');
             document.getElementById('success-container').classList.remove('hidden');
+        }
+
+        // --- NEW: CONFETTI & FINAL MESSAGE ---
+
+        function triggerConfettiAndFinalMsg() {
+            // 1. Verstecke die Buttons und den bisherigen Inhalt
+            document.getElementById('booking-confirmed-content').classList.add('hidden');
+            
+            // 2. Zeige die finale Nachricht
+            document.getElementById('final-msg').classList.remove('hidden');
+
+            // 3. Feuere Konfetti
+            var duration = 3000;
+            var end = Date.now() + duration;
+
+            (function frame() {
+                confetti({
+                    particleCount: 5,
+                    angle: 60,
+                    spread: 55,
+                    origin: { x: 0 },
+                    colors: ['#4285F4', '#34A853', '#FBBC05', '#EA4335'] // Google Farben
+                });
+                confetti({
+                    particleCount: 5,
+                    angle: 120,
+                    spread: 55,
+                    origin: { x: 1 },
+                    colors: ['#4285F4', '#34A853', '#FBBC05', '#EA4335']
+                });
+
+                if (Date.now() < end) {
+                    requestAnimationFrame(frame);
+                }
+            }());
         }
 
         // --- KALENDER FUNKTIONEN ---
@@ -387,6 +447,9 @@ END:VCALENDAR`;
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
+
+            // NEU: Animation starten
+            triggerConfettiAndFinalMsg();
         }
 
         function openGoogleCal() {
@@ -397,6 +460,9 @@ END:VCALENDAR`;
             
             const url = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(det.title)}&dates=${startStr}/${endStr}&details=${encodeURIComponent(det.desc)}&location=${encodeURIComponent(det.loc)}`;
             window.open(url, '_blank');
+
+            // NEU: Animation starten
+            triggerConfettiAndFinalMsg();
         }
     </script>
 </body>
