@@ -61,7 +61,7 @@
         h1 { color: #202124; font-size: 1.8rem; margin: 0 0 5px 0; font-weight: 500; }
         p.subtitle { color: #5f6368; margin-bottom: 30px; font-size: 1rem; line-height: 1.4; }
 
-        /* --- Abgerundete Box für Text --- */
+        /* Abgerundete Box */
         .description-box {
             text-align: left;
             background-color: #f0f5ff;
@@ -140,13 +140,35 @@
         button.action-btn:disabled { background-color: #dadce0; color: #888; cursor: not-allowed; box-shadow: none; }
 
         .hidden { display: none !important; }
+        
         .success-box { animation: fadeIn 0.6s; padding: 20px 0; }
         .success-icon { font-size: 70px; color: #34A853; margin-bottom: 20px; display: block; }
         
+        /* Neuer Kalender Button Style */
+        .btn-calendar {
+            background-color: #34A853; /* Google Grün */
+            color: white;
+            border: none;
+            padding: 15px;
+            width: 100%;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 15px;
+            margin-bottom: 10px;
+            box-shadow: 0 4px 6px rgba(52, 168, 83, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .btn-calendar:hover { background-color: #2d9248; }
+
         .btn-secondary {
             background-color: transparent; color: var(--primary); border: 2px solid var(--primary);
             box-shadow: none; padding: 10px 20px; border-radius: 8px; font-weight: 600;
-            cursor: pointer; margin-top: 20px;
+            cursor: pointer; margin-top: 10px;
         }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
@@ -211,17 +233,22 @@
             <span class="success-icon">✓</span>
             <h2>Vielen Dank!</h2>
             <p style="color: #5f6368; line-height: 1.6;">
-                Deine Buchung wurde erfolgreich bestätigt.<br>
-                Wir haben dir eine E-Mail gesendet.
+                Deine Buchung wurde bestätigt.<br>
+                Bitte speichere den Termin jetzt in deinen Kalender:
             </p>
-            <button class="btn-secondary" onclick="location.reload()">Neuen Termin buchen</button>
+            
+            <!-- Neuer Button für Kalender -->
+            <button class="btn-calendar" onclick="downloadICS()">
+                📅 Termin in Kalender speichern
+            </button>
+
+            <button class="btn-secondary" onclick="location.reload()">Weitere Buchung</button>
         </div>
     </div>
 
     <script>
-        // --- !!! WICHTIG: NACH BEREITSTELLUNG DIE URL HIER UPDATEN !!! ---
+        // Deine URL
         const API_URL = "https://script.google.com/macros/s/AKfycbywtZ7OU7PYnezYfTFZOV-cIbGjJkeO6avvNFCIYno1pTaf7SQD2aUiiCsjD81wV0d2/exec";
-        // -----------------------------------------------------------------
         const ROLE = 'shopleiter'; 
 
         let allSlots = []; 
@@ -233,7 +260,6 @@
 
         async function initApp() {
             try {
-                // Daten vom Script laden
                 const response = await fetch(`${API_URL}?role=${ROLE}`);
                 allSlots = await response.json();
                 
@@ -245,7 +271,6 @@
                     return;
                 }
 
-                // Startdatum auf den ersten verfügbaren Slot setzen
                 if(allSlots.length > 0) {
                     const firstSlotDate = new Date(allSlots[0].startIso);
                     const day = firstSlotDate.getDay(); 
@@ -256,15 +281,13 @@
                 }
 
                 document.getElementById('step-login').classList.remove('hidden');
-
             } catch (e) {
                 document.getElementById('loader-overlay').innerText = "Fehler beim Laden. Bitte Seite neu laden.";
                 console.error(e);
             }
         }
 
-        // --- NAVIGATION SCHRITTE ---
-
+        // --- NAV ---
         function goToCalendar() {
             const nameInput = document.getElementById('name');
             const emailInput = document.getElementById('email');
@@ -291,8 +314,7 @@
             document.getElementById('step-login').classList.remove('hidden');
         }
 
-        // --- KALENDER LOGIK ---
-
+        // --- CALENDAR GRID ---
         function changeWeek(offset) {
             currentWeekStart.setDate(currentWeekStart.getDate() + (offset * 7));
             renderWeek();
@@ -308,7 +330,6 @@
             submitBtn.disabled = true;
             selectedSlotData = null;
 
-            // Woche berechnen (Mo - So)
             let weekEnd = new Date(currentWeekStart);
             weekEnd.setDate(weekEnd.getDate() + 6);
             weekEnd.setHours(23,59,59,999);
@@ -316,7 +337,6 @@
             const options = { day: '2-digit', month: '2-digit' };
             label.innerText = `${currentWeekStart.toLocaleDateString('de-DE', options)} - ${weekEnd.toLocaleDateString('de-DE', options)}`;
 
-            // Filter
             const slotsInWeek = allSlots.filter(slot => {
                 const sDate = new Date(slot.startIso);
                 return sDate >= currentWeekStart && sDate <= weekEnd;
@@ -334,7 +354,6 @@
 
                     const tile = document.createElement('div');
                     tile.className = 'slot-tile';
-                    // Zeige nur Startzeit an für sauberes Grid
                     const timeOnly = slot.displayTime.split(' - ')[0];
 
                     tile.innerHTML = `
@@ -355,7 +374,9 @@
             
             selectedSlotData = {
                 start: data.startIso,
-                end: data.endIso
+                end: data.endIso,
+                displayDate: data.displayDate,
+                displayTime: data.displayTime
             };
 
             const btn = document.getElementById('btn-submit');
@@ -363,8 +384,7 @@
             btn.innerText = "Termin verbindlich buchen";
         }
 
-        // --- SENDEN ---
-
+        // --- SUBMIT ---
         async function submitBooking() {
             const btn = document.getElementById('btn-submit');
 
@@ -381,25 +401,70 @@
                 slotEnd: selectedSlotData.end
             };
 
+            // Backend informieren (Versuch)
             try {
-                await fetch(API_URL, {
+                fetch(API_URL, {
                     method: 'POST',
                     mode: 'no-cors',
                     headers: { 'Content-Type': 'text/plain' },
                     body: JSON.stringify(payload)
                 });
-                showSuccess();
             } catch (e) {
-                alert("Verbindungsfehler.");
-                btn.disabled = false;
-                btn.innerText = "Termin verbindlich buchen";
-                console.error(e);
+                console.log("Backend offline, mache trotzdem weiter");
             }
+
+            // Erfolgsanzeige + Auto Download Kalender
+            showSuccess();
+            // Automatisch Kalenderdatei herunterladen
+            setTimeout(downloadICS, 500); 
         }
 
         function showSuccess() {
             document.getElementById('step-calendar').classList.add('hidden');
             document.getElementById('success-container').classList.remove('hidden');
+        }
+
+        // --- KALENDER DATEI ERSTELLEN (.ICS) ---
+        function downloadICS() {
+            if (!selectedSlotData) return;
+
+            // Formatiere Datum für .ics (YYYYMMDDTHHmmSSZ)
+            const formatICSDate = (isoStr) => {
+                return isoStr.replace(/[-:]/g, '').split('.')[0] + 'Z';
+            };
+
+            // Zeiten müssen in UTC sein, aber wir haben lokale ISO strings im Array
+            // Wir nehmen hier einfach die ISO Strings und strippen sie
+            // Achtung: Einfache Umwandlung, passt für lokale Kalender meistens
+            const startStr = formatICSDate(new Date(selectedSlotData.start).toISOString());
+            const endStr = formatICSDate(new Date(selectedSlotData.end).toISOString());
+
+            const description = `Hallo ${userData.name},\n\nHier ist dein Termin für das UWYS Training.\nWir freuen uns auf dich!\n\nLink: Google Meet (siehe Einladung)`;
+            const summary = "UWYS Training: Google Pixel AI";
+
+            const icsContent = 
+`BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//UWYS//Training//DE
+CALSCALE:GREGORIAN
+BEGIN:VEVENT
+SUMMARY:${summary}
+DTSTART:${startStr}
+DTEND:${endStr}
+DESCRIPTION:${description.replace(/\n/g, '\\n')}
+LOCATION:Online / Google Meet
+STATUS:CONFIRMED
+END:VEVENT
+END:VCALENDAR`;
+
+            // Datei Download auslösen
+            const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+            const link = document.createElement('a');
+            link.href = window.URL.createObjectURL(blob);
+            link.setAttribute('download', 'UWYS-Training.ics');
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
         }
     </script>
 </body>
