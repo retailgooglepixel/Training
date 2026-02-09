@@ -17,10 +17,14 @@
 
         body {
             font-family: 'Roboto', sans-serif;
-            margin: 0; padding: 0; min-height: 100vh;
-            display: flex; justify-content: center; align-items: center;
+            margin: 0; padding: 20px; min-height: 100vh;
+            display: flex; 
+            flex-direction: column; /* WICHTIG: Elemente untereinander */
+            justify-content: center; 
+            align-items: center;
             background-image: var(--bg-image);
             background-size: cover; background-position: center; background-attachment: fixed;
+            gap: 20px; /* Abstand zwischen Logo und Karte */
         }
 
         body::before {
@@ -28,34 +32,23 @@
             background: rgba(255, 255, 255, 0.4); backdrop-filter: blur(5px); z-index: -1;
         }
 
-        .card {
-            background: rgba(255, 255, 255, 0.95);
-            padding: 40px; border-radius: 16px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
-            width: 90%; max-width: 500px;
-            text-align: center; position: relative;
-            animation: slideUp 0.5s ease-out;
-            max-height: 90vh; overflow-y: auto;
-            scrollbar-width: thin;
-        }
-        
-        .card::-webkit-scrollbar { width: 6px; }
-        .card::-webkit-scrollbar-track { background: transparent; }
-        .card::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px; }
-
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* BRAND HEADER STYLE (NEU) */
+        /* BRAND HEADER STYLE (JETZT AUßERHALB DER KARTE) */
         .brand-header {
             font-size: 1.8rem;
             font-weight: 700;
-            margin-bottom: 25px;
             color: #3c4043;
             display: flex;
             justify-content: center;
             align-items: center;
             gap: 10px;
             animation: pulse 2.5s infinite ease-in-out;
+            
+            /* Damit es immer gut lesbar ist: */
+            background: rgba(255, 255, 255, 0.9);
+            padding: 10px 30px;
+            border-radius: 50px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            z-index: 10;
         }
 
         .brand-heart {
@@ -66,7 +59,7 @@
 
         .brand-t {
             color: var(--telekom-magenta); 
-            font-family: serif; /* Serif für das T-Logo Feeling */
+            font-family: serif; 
             font-weight: 900;
             font-size: 2rem;
         }
@@ -76,7 +69,24 @@
             50% { transform: scale(1.05); }
             100% { transform: scale(1); }
         }
-        /* ENDE BRAND HEADER STYLE */
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px; border-radius: 16px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            width: 90%; max-width: 500px;
+            text-align: center; position: relative;
+            animation: slideUp 0.5s ease-out;
+            max-height: 80vh; /* Etwas kleiner, damit Logo Platz hat */
+            overflow-y: auto;
+            scrollbar-width: thin;
+        }
+        
+        .card::-webkit-scrollbar { width: 6px; }
+        .card::-webkit-scrollbar-track { background: transparent; }
+        .card::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px; }
+
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
         h1 { color: #202124; font-size: 1.8rem; margin: 0 0 5px 0; font-weight: 500; }
         p.subtitle { color: #5f6368; margin-bottom: 30px; font-size: 1rem; line-height: 1.4; }
@@ -206,20 +216,20 @@
 </head>
 <body>
 
-    <div class="card">
-        <!-- NEU: BRAND HEADER (Immer sichtbar) -->
-        <div class="brand-header">
-            <span>#TeamPixel</span>
-            <span class="brand-heart">❤️</span>
-            <span class="brand-t">T</span>
-        </div>
+    <!-- NEU: BRAND HEADER (Jetzt außerhalb der Karte, damit er sicher sichtbar ist) -->
+    <div class="brand-header">
+        <span>#TeamPixel</span>
+        <span class="brand-heart">❤️</span>
+        <span class="brand-t">T</span>
+    </div>
 
+    <div class="card">
         <!-- Lade-Screen -->
         <div id="loader-overlay" style="padding: 40px 0;">
             <div style="color: var(--primary);">Lade Termine...</div>
         </div>
 
-        <!-- SCHRITT 0: Rollenauswahl (NEU) -->
+        <!-- SCHRITT 0: Rollenauswahl -->
         <div id="step-role-selection" class="hidden">
             <h1>Willkommen</h1>
             <p class="subtitle">Wähle dein Training:</p>
