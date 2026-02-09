@@ -12,6 +12,7 @@
         :root {
             --primary: #4285F4;
             --bg-image: url('https://i.postimg.cc/hjXwS49w/Screenshot_04_02_2026_um_17_28_35_PM.png');
+            --telekom-magenta: #E20074;
         }
 
         body {
@@ -43,6 +44,39 @@
         .card::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px; }
 
         @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* BRAND HEADER STYLE (NEU) */
+        .brand-header {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 25px;
+            color: #3c4043;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            animation: pulse 2.5s infinite ease-in-out;
+        }
+
+        .brand-heart {
+            color: var(--telekom-magenta);
+            font-size: 1.6rem;
+            display: inline-block;
+        }
+
+        .brand-t {
+            color: var(--telekom-magenta); 
+            font-family: serif; /* Serif für das T-Logo Feeling */
+            font-weight: 900;
+            font-size: 2rem;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        /* ENDE BRAND HEADER STYLE */
 
         h1 { color: #202124; font-size: 1.8rem; margin: 0 0 5px 0; font-weight: 500; }
         p.subtitle { color: #5f6368; margin-bottom: 30px; font-size: 1rem; line-height: 1.4; }
@@ -173,6 +207,13 @@
 <body>
 
     <div class="card">
+        <!-- NEU: BRAND HEADER (Immer sichtbar) -->
+        <div class="brand-header">
+            <span>#TeamPixel</span>
+            <span class="brand-heart">❤️</span>
+            <span class="brand-t">T</span>
+        </div>
+
         <!-- Lade-Screen -->
         <div id="loader-overlay" style="padding: 40px 0;">
             <div style="color: var(--primary);">Lade Termine...</div>
