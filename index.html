@@ -111,6 +111,20 @@
         button.action-btn:hover { background-color: #3367d6; }
         button.action-btn:disabled { background-color: #dadce0; color: #888; cursor: not-allowed; box-shadow: none; }
 
+        /* Role Cards */
+        .role-card {
+            background: white; border: 1px solid #dadce0; border-radius: 12px;
+            padding: 20px; cursor: pointer; text-align: left;
+            transition: all 0.2s; display: flex; flex-direction: column; gap: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05); width: 100%; margin-bottom: 0;
+        }
+        .role-card:hover {
+            border-color: var(--primary); box-shadow: 0 4px 8px rgba(66, 133, 244, 0.2);
+            transform: translateY(-2px);
+        }
+        .role-card h3 { margin: 0; color: #202124; font-size: 1.1rem; }
+        .role-card p { margin: 0; font-size: 0.9rem; color: #5f6368; }
+
         /* Success & Calendar Buttons */
         .hidden { display: none !important; }
         .success-box { animation: fadeIn 0.6s; padding: 20px 0; }
@@ -164,10 +178,27 @@
             <div style="color: var(--primary);">Lade Termine...</div>
         </div>
 
+        <!-- SCHRITT 0: Rollenauswahl (NEU) -->
+        <div id="step-role-selection" class="hidden">
+            <h1>Willkommen</h1>
+            <p class="subtitle">Wähle dein Training:</p>
+            
+            <div style="display: flex; gap: 15px; flex-direction: column;">
+                <button class="role-card" onclick="selectRole('shopleiter')">
+                    <h3>👨‍💼 Shopleiter</h3>
+                    <p>Training für Führungskräfte</p>
+                </button>
+                <button class="role-card" onclick="selectRole('mitarbeiter')">
+                    <h3>👥 Mitarbeiter</h3>
+                    <p>Training für Shop-Mitarbeiter</p>
+                </button>
+            </div>
+        </div>
+
         <!-- SCHRITT 1: Login -->
         <div id="step-login" class="hidden">
-            <h1 id="login-title">Willkommen</h1>
-            <p id="login-subtitle" class="subtitle">Bitte melde dich an, um fortzufahren.</p>
+            <h1 id="login-title">Anmeldung</h1>
+            <p id="login-subtitle" class="subtitle">Bitte gib deine Daten ein.</p>
 
             <div class="input-group">
                 <input type="text" id="name" required>
@@ -180,6 +211,11 @@
             </div>
 
             <button class="action-btn" onclick="goToCalendar()">Weiter zur Terminauswahl</button>
+            
+            <!-- Zurück zur Auswahl -->
+            <div style="margin-top:15px; font-size:0.85rem; color:#888; cursor:pointer;" onclick="goBackToRoleSelection()">
+                &larr; Zurück zur Auswahl
+            </div>
         </div>
 
         <!-- SCHRITT 2: Kalender -->
@@ -262,7 +298,7 @@
         const LINK_MITARBEITER = "https://meet.google.com/jko-trdv-ciq";
 
         // STATUS VARIABLEN
-        let currentRole = 'shopleiter'; // Standard: Start als Shopleiter
+        let currentRole = 'shopleiter'; 
         let currentMeetingLink = LINK_SHOPLEITER;
 
         let allFetchedSlots = []; 
@@ -274,19 +310,43 @@
 
         async function initApp() {
             try {
-                // Wir fragen ALLE Slots ab (Backend gibt Shopleiter UND Mitarbeiter zurück)
+                // Wir fragen ALLE Slots ab
                 const response = await fetch(`${API_URL}`);
                 allFetchedSlots = await response.json();
                 document.getElementById('loader-overlay').classList.add('hidden');
-
-                // Initialisiere Startwoche basierend auf Shopleiter Terminen
-                setStartWeekForRole('shopleiter');
                 
-                document.getElementById('step-login').classList.remove('hidden');
+                // Statt direkt zum Login, zeigen wir jetzt die Auswahl
+                document.getElementById('step-role-selection').classList.remove('hidden');
             } catch (e) {
                 console.error(e);
                 alert("Fehler beim Laden.");
             }
+        }
+
+        // --- NEU: ROLLE WÄHLEN ---
+        function selectRole(role) {
+            currentRole = role;
+            
+            if (role === 'shopleiter') {
+                currentMeetingLink = LINK_SHOPLEITER;
+                document.getElementById('login-title').innerText = "Shopleiter Anmeldung";
+                document.getElementById('calendar-subtitle').innerText = "Google Pixel - Shopleiter";
+            } else {
+                currentMeetingLink = LINK_MITARBEITER;
+                document.getElementById('login-title').innerText = "Mitarbeiter Anmeldung";
+                document.getElementById('calendar-subtitle').innerText = "Google Pixel - Mitarbeiter";
+            }
+
+            // Startwoche vorbereiten
+            setStartWeekForRole(role);
+
+            // Weiter zum Login (Daten erfassen)
+            prepareDataEntryForRole(document.getElementById('login-title').innerText, "Bitte gib deine Daten ein.");
+        }
+
+        function goBackToRoleSelection() {
+            document.getElementById('step-login').classList.add('hidden');
+            document.getElementById('step-role-selection').classList.remove('hidden');
         }
 
         // Setzt das Startdatum des Kalenders auf den ersten verfügbaren Slot der jeweiligen Rolle
@@ -406,6 +466,7 @@
             document.getElementById('booking-confirmed-content').classList.remove('hidden'); // Interner Reset
             document.getElementById('final-msg').classList.add('hidden'); // Reset confetti msg
             document.getElementById('step-calendar').classList.add('hidden'); // Sicherstellen, dass Kalender weg ist
+            document.getElementById('step-role-selection').classList.add('hidden'); // Auswahl weg
 
             // Inputs Leeren
             document.getElementById('name').value = '';
