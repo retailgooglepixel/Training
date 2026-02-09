@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>UWYS Buchung - Google Pixel AI</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- Externe Bibliothek für Confetti Effekt -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
     <style>
@@ -158,13 +159,15 @@
 <body>
 
     <div class="card">
+        <!-- Lade-Screen -->
         <div id="loader-overlay" style="padding: 40px 0;">
             <div style="color: var(--primary);">Lade Termine...</div>
         </div>
 
+        <!-- SCHRITT 1: Login -->
         <div id="step-login" class="hidden">
-            <h1>Willkommen</h1>
-            <p class="subtitle">Bitte melde dich an, um fortzufahren.</p>
+            <h1 id="login-title">Willkommen</h1>
+            <p id="login-subtitle" class="subtitle">Bitte melde dich an, um fortzufahren.</p>
 
             <div class="input-group">
                 <input type="text" id="name" required>
@@ -179,9 +182,10 @@
             <button class="action-btn" onclick="goToCalendar()">Weiter zur Terminauswahl</button>
         </div>
 
+        <!-- SCHRITT 2: Kalender -->
         <div id="step-calendar" class="hidden">
             <h1>Training buchen</h1>
-            <p class="subtitle">Google Pixel - Shopleiter</p>
+            <p class="subtitle" id="calendar-subtitle">Google Pixel - Shopleiter</p>
 
             <div class="description-box">
                 Wir zeigen dir im Training, warum dieses Gerät der perfekte Begleiter ist: Von der leistungsstarken Kamera über smarte KI-Features bis hin zum Akku. 🚀
@@ -205,6 +209,7 @@
             </div>
         </div>
 
+        <!-- Erfolgsmeldung (Schritt 3) -->
         <div id="success-container" class="hidden success-box">
             <div id="booking-confirmed-content">
                 <span class="success-icon">✓</span>
@@ -217,10 +222,12 @@
                 </p>
                 
                 <div class="cal-btn-container">
+                    <!-- Button 1: Universelle ICS Datei -->
                     <button class="btn-ics" onclick="downloadICS()">
                         <span>📅</span> Kalendereintrag öffnen (Alle)
                     </button>
                     
+                    <!-- Button 2: Google Web -->
                     <button class="btn-google" onclick="openGoogleCal()">
                         <span>G</span> Google Kalender (Browser)
                     </button>
@@ -229,16 +236,16 @@
                 <button class="btn-secondary" onclick="location.reload()">Neuen Termin buchen</button>
             </div>
 
+            <!-- FINALER SCREEN MIT KONFETTI (Schritt 4, versteckt) -->
             <div id="final-msg" class="hidden final-msg-box">
                 <h1 class="final-headline">Vielen Dank! 🎉</h1>
                 <p class="final-sub">Wir freuen uns auf dich.</p>
                 <br>
                 <p style="font-size: 3rem;">👋</p>
                 
-                <div style="margin-top: 40px;">
-                    <button class="action-btn" onclick="location.reload()">
-                        Zurück zur Hauptseite
-                    </button>
+                <!-- HIER IST DER DYNAMISCHE BUTTON CONTAINER -->
+                <div style="margin-top: 40px;" id="final-action-container">
+                    <!-- Wird per JS befüllt -->
                 </div>
             </div>
 
@@ -247,13 +254,18 @@
 
     <script>
         // --- DEINE NEUE URL ---
-        const API_URL = "https://script.google.com/macros/s/AKfycbzTmWe7hWq7E0XGwJv8i0MQn92Vs6rQOmlAFqLVd1ILf2JZRwjvmB-XTG8Rxcax4TrD/exec";
-        // ----------------------
+        const API_URL = "https://script.google.com/macros/s/AKfycbyWX1szTpEnIEFEHiqOrcVSTmSM2_tjDoKST6au17wTObUEsTREe66_8qGmbEin9eTT/exec";
+        // -----------------
         
-        const ROLE = 'shopleiter'; 
-        const MEETING_LINK = "https://meet.google.com/tjm-ghiz-tgb"; 
+        // ZWEI LINKS FÜR ZWEI ROLLEN
+        const LINK_SHOPLEITER = "https://meet.google.com/tjm-ghiz-tgb";
+        const LINK_MITARBEITER = "https://meet.google.com/jko-trdv-ciq";
 
-        let allSlots = []; 
+        // STATUS VARIABLEN
+        let currentRole = 'shopleiter'; // Standard: Start als Shopleiter
+        let currentMeetingLink = LINK_SHOPLEITER;
+
+        let allFetchedSlots = []; 
         let currentWeekStart = new Date(); 
         let selectedSlotData = null;
         let userData = { name: '', email: '' };
@@ -262,22 +274,31 @@
 
         async function initApp() {
             try {
-                const response = await fetch(`${API_URL}?role=${ROLE}`);
-                allSlots = await response.json();
+                // Wir fragen ALLE Slots ab (Backend gibt Shopleiter UND Mitarbeiter zurück)
+                const response = await fetch(`${API_URL}`);
+                allFetchedSlots = await response.json();
                 document.getElementById('loader-overlay').classList.add('hidden');
 
-                if(allSlots.length > 0) {
-                    const firstSlotDate = new Date(allSlots[0].startIso);
-                    const day = firstSlotDate.getDay(); 
-                    const diff = firstSlotDate.getDate() - day + (day == 0 ? -6:1);
-                    currentWeekStart = new Date(firstSlotDate);
-                    currentWeekStart.setDate(diff);
-                    currentWeekStart.setHours(0,0,0,0);
-                }
+                // Initialisiere Startwoche basierend auf Shopleiter Terminen
+                setStartWeekForRole('shopleiter');
+                
                 document.getElementById('step-login').classList.remove('hidden');
             } catch (e) {
                 console.error(e);
                 alert("Fehler beim Laden.");
+            }
+        }
+
+        // Setzt das Startdatum des Kalenders auf den ersten verfügbaren Slot der jeweiligen Rolle
+        function setStartWeekForRole(role) {
+            const roleSlots = allFetchedSlots.filter(s => s.role === role);
+            if(roleSlots.length > 0) {
+                const firstSlotDate = new Date(roleSlots[0].startIso);
+                const day = firstSlotDate.getDay(); 
+                const diff = firstSlotDate.getDate() - day + (day == 0 ? -6:1);
+                currentWeekStart = new Date(firstSlotDate);
+                currentWeekStart.setDate(diff);
+                currentWeekStart.setHours(0,0,0,0);
             }
         }
 
@@ -316,9 +337,10 @@
             const options = { day: '2-digit', month: '2-digit' };
             label.innerText = `${currentWeekStart.toLocaleDateString('de-DE', options)} - ${weekEnd.toLocaleDateString('de-DE', options)}`;
 
-            const slotsInWeek = allSlots.filter(slot => {
+            // WICHTIG: Filtern nach aktueller Rolle
+            const slotsInWeek = allFetchedSlots.filter(slot => {
                 const sDate = new Date(slot.startIso);
-                return sDate >= currentWeekStart && sDate <= weekEnd;
+                return slot.role === currentRole && sDate >= currentWeekStart && sDate <= weekEnd;
             });
 
             if (slotsInWeek.length === 0) noSlotsMsg.classList.remove('hidden');
@@ -356,10 +378,10 @@
             const payload = {
                 name: userData.name,
                 email: userData.email,
-                role: ROLE,
+                role: currentRole, // Schickt 'shopleiter' oder 'mitarbeiter'
                 slotStart: selectedSlotData.startIso,
                 slotEnd: selectedSlotData.endIso,
-                meetingLink: MEETING_LINK 
+                meetingLink: currentMeetingLink 
             };
 
             try {
@@ -375,38 +397,63 @@
             document.getElementById('success-container').classList.remove('hidden');
         }
 
-        // --- KONFETTI & FINAL MESSAGE ---
+        // --- SCHALTER FÜR MITARBEITER-MODUS ---
+        function switchToMitarbeiterMode() {
+            // 1. Status ändern
+            currentRole = 'mitarbeiter';
+            currentMeetingLink = LINK_MITARBEITER;
+            
+            // 2. UI Resetten für neuen Flow
+            document.getElementById('success-container').classList.add('hidden');
+            document.getElementById('booking-confirmed-content').classList.remove('hidden');
+            document.getElementById('final-msg').classList.add('hidden');
+            document.getElementById('btn-submit').innerText = "Termin verbindlich buchen";
+            
+            // 3. Texte anpassen
+            document.getElementById('calendar-subtitle').innerText = "Google Pixel - Mitarbeiter";
+
+            // 4. Startwoche auf Mitarbeiter-Startdatum setzen
+            setStartWeekForRole('mitarbeiter');
+
+            // 5. Kalender Screen anzeigen
+            document.getElementById('step-calendar').classList.remove('hidden');
+            renderWeek();
+        }
+
+        // --- KONFETTI & FINAL MESSAGE & WEICHE ---
 
         function triggerConfettiAndFinalMsg() {
-            // 1. Verstecke die Buttons und den bisherigen Inhalt
             document.getElementById('booking-confirmed-content').classList.add('hidden');
-            
-            // 2. Zeige die finale Nachricht
             document.getElementById('final-msg').classList.remove('hidden');
 
-            // 3. Feuere Konfetti
+            // Button Container finden
+            const container = document.getElementById('final-action-container');
+            container.innerHTML = ''; // Leer machen
+
+            if (currentRole === 'shopleiter') {
+                // Wenn Shopleiter fertig ist: Button für Mitarbeiter-Buchung
+                const btn = document.createElement('button');
+                btn.className = 'action-btn';
+                btn.innerText = "Buche ein Training für deine Mitarbeiter!";
+                btn.onclick = switchToMitarbeiterMode;
+                container.appendChild(btn);
+            } else {
+                // Wenn Mitarbeiter (oder 2. Runde) fertig ist: Zurück zur Startseite
+                const btn = document.createElement('button');
+                btn.className = 'action-btn';
+                btn.innerText = "Zurück zur Hauptseite";
+                btn.onclick = () => location.reload();
+                container.appendChild(btn);
+            }
+
+            // Confetti
             var duration = 3000;
             var end = Date.now() + duration;
 
             (function frame() {
-                confetti({
-                    particleCount: 5,
-                    angle: 60,
-                    spread: 55,
-                    origin: { x: 0 },
-                    colors: ['#4285F4', '#34A853', '#FBBC05', '#EA4335'] // Google Farben
-                });
-                confetti({
-                    particleCount: 5,
-                    angle: 120,
-                    spread: 55,
-                    origin: { x: 1 },
-                    colors: ['#4285F4', '#34A853', '#FBBC05', '#EA4335']
-                });
-
-                if (Date.now() < end) {
-                    requestAnimationFrame(frame);
-                }
+                confetti({ particleCount: 5, angle: 60, spread: 55, origin: { x: 0 }, colors: ['#4285F4', '#34A853', '#FBBC05', '#EA4335'] });
+                confetti({ particleCount: 5, angle: 120, spread: 55, origin: { x: 1 }, colors: ['#4285F4', '#34A853', '#FBBC05', '#EA4335'] });
+                if (Date.now() < end) { requestAnimationFrame(frame); }
             }());
         }
 
@@ -417,9 +464,15 @@
         }
 
         function getCalDetails() {
+            // Titel je nach Rolle anpassen
+            let title = "UWYS Training: Google Pixel AI (Shopleiter)";
+            if(currentRole === 'mitarbeiter') {
+                title = "UWYS Training: Google Pixel AI (Mitarbeiter)";
+            }
+
             return {
-                title: "UWYS Training: Google Pixel AI",
-                desc: `Hallo ${userData.name},\n\nHier ist dein Termin für das Training.\nLink: ${MEETING_LINK}`,
+                title: title,
+                desc: `Hallo ${userData.name},\n\nHier ist dein Termin für das Training.\nLink: ${currentMeetingLink}`,
                 loc: "Online / Google Meet",
                 start: selectedSlotData.startIso,
                 end: selectedSlotData.endIso
@@ -454,7 +507,6 @@ END:VCALENDAR`;
             link.click();
             document.body.removeChild(link);
 
-            // NEU: Animation starten
             triggerConfettiAndFinalMsg();
         }
 
@@ -467,7 +519,6 @@ END:VCALENDAR`;
             const url = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(det.title)}&dates=${startStr}/${endStr}&details=${encodeURIComponent(det.desc)}&location=${encodeURIComponent(det.loc)}`;
             window.open(url, '_blank');
 
-            // NEU: Animation starten
             triggerConfettiAndFinalMsg();
         }
     </script>
