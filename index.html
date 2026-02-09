@@ -17,15 +17,16 @@
         }
 
         body {
-            font-family: 'Roboto', sans-serif;
+            /* NEU: Google Sans als Hauptschriftart */
+            font-family: 'Google Sans', 'Roboto', sans-serif;
             margin: 0; padding: 20px; min-height: 100vh;
             display: flex; 
-            flex-direction: column; /* WICHTIG: Elemente untereinander */
+            flex-direction: column; 
             justify-content: center; 
             align-items: center;
             background-image: var(--bg-image);
             background-size: cover; background-position: center; background-attachment: fixed;
-            gap: 20px; /* Abstand zwischen Logo und Karte */
+            gap: 20px; 
         }
 
         body::before {
@@ -47,9 +48,8 @@
             z-index: 10;
         }
 
-        /* Das neue Bild-Logo */
         .brand-logo-img {
-            height: 50px; /* Höhe fixieren, Breite automatisch */
+            height: 50px; 
             width: auto;
             display: block;
             object-fit: contain;
@@ -96,6 +96,8 @@
             width: 100%; padding: 14px 12px; border: 1px solid #dadce0; border-radius: 8px;
             font-size: 16px; outline: none; background: rgba(255,255,255,0.8);
             transition: all 0.3s; box-sizing: border-box; color: #333;
+            /* Input Font auch explizit setzen */
+            font-family: 'Google Sans', 'Roboto', sans-serif;
         }
         .input-group label {
             position: absolute; top: 16px; left: 10px; font-size: 16px; color: #5f6368;
@@ -142,6 +144,8 @@
             background-color: var(--primary); color: white; border: none; padding: 16px;
             width: 100%; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer;
             transition: background 0.3s; margin-top: 10px; box-shadow: 0 4px 6px rgba(66, 133, 244, 0.2);
+            /* Button Font explizit setzen */
+            font-family: 'Google Sans', 'Roboto', sans-serif;
         }
         button.action-btn:hover { background-color: #3367d6; }
         button.action-btn:disabled { background-color: #dadce0; color: #888; cursor: not-allowed; box-shadow: none; }
@@ -172,6 +176,7 @@
             border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer;
             display: flex; align-items: center; justify-content: center; gap: 8px;
             box-shadow: 0 4px 6px rgba(26, 115, 232, 0.2);
+            font-family: 'Google Sans', 'Roboto', sans-serif;
         }
         .btn-ics:hover { background-color: #1557b0; }
 
@@ -179,12 +184,14 @@
             background-color: white; color: #3c4043; border: 1px solid #dadce0; padding: 15px; width: 100%;
             border-radius: 8px; font-size: 16px; font-weight: 500; cursor: pointer;
             display: flex; align-items: center; justify-content: center; gap: 8px;
+            font-family: 'Google Sans', 'Roboto', sans-serif;
         }
         .btn-google:hover { background-color: #f8f9fa; border-color: #3c4043; }
 
         .btn-secondary {
             background-color: transparent; color: #5f6368; border: none;
             padding: 10px; font-size: 0.9rem; cursor: pointer; margin-top: 20px; text-decoration: underline;
+            font-family: 'Google Sans', 'Roboto', sans-serif;
         }
         
         /* Neuer Final Screen */
@@ -200,6 +207,23 @@
         .final-sub {
             font-size: 1.1rem;
             color: #555;
+        }
+
+        /* NEU: Gemini Footer Style */
+        .gemini-footer {
+            margin-top: 30px; 
+            font-size: 0.75rem; 
+            color: #9aa0a6; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 6px;
+            opacity: 0.8;
+        }
+        .gemini-logo-small {
+            height: 18px; 
+            width: auto;
+            vertical-align: middle;
         }
 
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -255,6 +279,13 @@
             <!-- Zurück zur Auswahl -->
             <div style="margin-top:15px; font-size:0.85rem; color:#888; cursor:pointer;" onclick="goBackToRoleSelection()">
                 &larr; Zurück zur Auswahl
+            </div>
+
+            <!-- NEU: Gemini Footer -->
+            <div class="gemini-footer">
+                Diese Seite wurde mit der freundlichen Unterstützung von Gemini
+                <img src="https://i.postimg.cc/YCvwTp5F/6AQ30Pyg_V8K.png" alt="Gemini" class="gemini-logo-small">
+                erstellt.
             </div>
         </div>
 
